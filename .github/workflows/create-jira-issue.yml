@@ -20,6 +20,11 @@ jobs:
         with:
           ref: main
 
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Issue Parser
         uses: stefanbuck/github-issue-praser@v3
         id: issue-parser
@@ -46,10 +51,9 @@ jobs:
         uses: atlassian/gajira-create@v3
         with:
           project: WSE
-          issuetype: Task  # 표준 이슈 타입으로 설정
+          issuetype: Task
           summary: "${{ github.event.issue.title }}"
           description: "${{ steps.md2jira.outputs.output-text }}"
-        # 'fields' 블록 제거
 
       - name: Log created issue
         run: echo "Jira Issue ${{ steps.create.outputs.issue }} was created"
@@ -61,9 +65,11 @@ jobs:
 
       - name: Create branch with Ticket number
         run: |
-          BRANCH_NAME="feature/#${{ steps.create.outputs.issue }}-${{ steps.issue-parser.outputs.issueparser_branchName }}"
+          BRANCH_NAME="feature/WSE-${{ steps.create.outputs.issue }}-${{ steps.issue-parser.outputs.issueparser_branchName }}"
           git checkout -b "$BRANCH_NAME"
           git push origin "$BRANCH_NAME"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update issue title
         uses: actions-cool/issues-helper@v3
