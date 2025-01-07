@@ -45,7 +45,7 @@ jobs:
         id: create
         uses: atlassian/gajira-create@v3
         with:
-          project: Websocket-Example
+          project: WSE
           issuetype: Sub-task
           summary: "${{ github.event.issue.title }}"
           description: "${{ steps.md2jira.outputs.output-text }}"
@@ -62,7 +62,7 @@ jobs:
       - name: Checkout develop code
         uses: actions/checkout@v4
         with:
-          ref: dev
+          ref: main
 
       - name: Create branch with Ticket number
         run: |
